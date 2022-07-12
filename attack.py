@@ -57,6 +57,7 @@ parser.add_argument("--sh", type=float, default=0.1)
 parser.add_argument("--num_workers", type=int, default=16)
 parser.add_argument('--pretrained', type=str, default=None)
 parser.add_argument("--step_size", type=int, default=60)
+parser.add_argument("--erase_rate", type=float, default=0.25)
 
 args = parser.parse_args()
 
@@ -713,15 +714,15 @@ for split, budget in zip(splits, budgets):
 
     # Select new samples, where the original pictures and the erased pictures each account for 50%.
     unerase_indices = np.setdiff1d(list(labeled_indices), erase_indices)
-    if len(unerase_indices) >= int(budget/2):
-        erase_path, selected_indices = erase_and_save(task_model, unerase_indices, sample, args.tmp_dir, args.test_dataset, split, int(budget/2))
+    if len(unerase_indices) >= int(budget*args.erase_rate):
+        erase_path, selected_indices = erase_and_save(task_model, unerase_indices, sample, args.tmp_dir, args.test_dataset, split, int(budget*args.erase_rate))
         erase_indices += selected_indices
         erase_sample = query(blackbox, erase_path, args.test_dataset)
         labeled_sample += erase_sample
         if args.sampling_strategy == 'random':
-            selected_indices = random.sample(list(np.setdiff1d(list(all_indices), labeled_indices)), int(budget/2))
+            selected_indices = random.sample(list(np.setdiff1d(list(all_indices), labeled_indices)), int(budget*(1-args.erase_rate)))
         elif args.sampling_strategy =='kcenter':
-            selected_indices = selected_with_kcenter(k_model, labeled_indices, all_indices, args.test_dataset, int(budget/2), sample)
+            selected_indices = selected_with_kcenter(k_model, labeled_indices, all_indices, args.test_dataset, int(budget*(1-args.erase_rate)), sample)
         else:
             raise ValueError("Unrecognized strategy")
     else:
