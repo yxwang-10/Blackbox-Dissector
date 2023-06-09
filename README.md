@@ -1,6 +1,6 @@
 # Black-Box Dissector: Towards Erasing-based Hard-Label Model Stealing Attack
 
-Our codes are based on the source code of Knockoff-Nets kindly provided by the authors.
+The source code for our ECCV2022 paper "[Black-Box Dissector: Towards Erasing-based Hard-Label Model Stealing Attack](https://www.ecva.net/papers/eccv_2022/papers_ECCV/papers/136650188.pdf)". Our codes are based on the source code of Knockoff-Nets kindly provided by the authors.
 
 ## Installation
 
